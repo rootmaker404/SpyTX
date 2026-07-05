@@ -2,12 +2,27 @@ from __future__ import annotations
 
 import json
 import os
+import shlex
 from typing import Callable
 
-from .domain import inspect_domain, inspect_dns, inspect_tls, inspect_web
-from .ip import inspect_ip
 from .phone import inspect_phone
-from .username import inspect_username
+from .public_intel import (
+    inspect_batch_ip,
+    inspect_check_ip,
+    inspect_contacts,
+    inspect_deep_ip,
+    inspect_domain,
+    inspect_dns,
+    inspect_ip,
+    inspect_lookup,
+    inspect_my_ip,
+    inspect_name,
+    inspect_rdap,
+    inspect_social,
+    inspect_tls,
+    inspect_web,
+    inspect_whois,
+)
 
 
 BLUE = "\033[94m"
@@ -39,16 +54,16 @@ def boot_screen() -> None:
 
 
 def dashboard() -> None:
-    print(f"{WHITE}+----------------------+----------------------+----------------------+{RESET}")
-    print(f"{WHITE}|{RESET} {BLUE}[01] IP{RESET}              {WHITE}|{RESET} {RED}[02] DOMAIN{RESET}          {WHITE}|{RESET} {CYAN}[03] DNS{RESET}             {WHITE}|{RESET}")
-    print(f"{WHITE}|{RESET} ip <address>        {WHITE}|{RESET} domain <host>       {WHITE}|{RESET} dns <host>          {WHITE}|{RESET}")
-    print(f"{WHITE}+----------------------+----------------------+----------------------+{RESET}")
-    print(f"{WHITE}|{RESET} {BLUE}[04] TLS{RESET}             {WHITE}|{RESET} {RED}[05] WEB{RESET}             {WHITE}|{RESET} {CYAN}[06] PHONE{RESET}           {WHITE}|{RESET}")
-    print(f"{WHITE}|{RESET} tls <host>          {WHITE}|{RESET} web <host>          {WHITE}|{RESET} phone <num> [CC]    {WHITE}|{RESET}")
-    print(f"{WHITE}+----------------------+----------------------+----------------------+{RESET}")
-    print(f"{WHITE}|{RESET} {BLUE}[07] USERNAME{RESET}        {WHITE}|{RESET} {RED}[08] HELP{RESET}            {WHITE}|{RESET} {CYAN}[09] EXIT{RESET}            {WHITE}|{RESET}")
-    print(f"{WHITE}|{RESET} username <name>     {WHITE}|{RESET} help                {WHITE}|{RESET} exit                {WHITE}|{RESET}")
-    print(f"{WHITE}+----------------------+----------------------+----------------------+{RESET}")
+    print(f"{WHITE}+------------------------------+---------------------------------+------------------------------+{RESET}")
+    print(f"{WHITE}|{RESET} {BLUE}[01] IP INTEL{RESET}              {WHITE}|{RESET} {RED}[02] DOMAIN / DNS{RESET}             {WHITE}|{RESET} {CYAN}[03] WEB POSTURE{RESET}          {WHITE}|{RESET}")
+    print(f"{WHITE}|{RESET} /ip /deepip /checkip       {WHITE}|{RESET} /domain /lookup /dns /whois    {WHITE}|{RESET} /webcheck /tls /rdap       {WHITE}|{RESET}")
+    print(f"{WHITE}+------------------------------+---------------------------------+------------------------------+{RESET}")
+    print(f"{WHITE}|{RESET} {BLUE}[04] PHONE META{RESET}            {WHITE}|{RESET} {RED}[05] SOCIAL / NAME{RESET}            {WHITE}|{RESET} {CYAN}[06] REPORTS{RESET}              {WHITE}|{RESET}")
+    print(f"{WHITE}|{RESET} /phone <number> [region]    {WHITE}|{RESET} /social <name> /name <name>    {WHITE}|{RESET} JSON audit output          {WHITE}|{RESET}")
+    print(f"{WHITE}+------------------------------+---------------------------------+------------------------------+{RESET}")
+    print(f"{WHITE}|{RESET} {BLUE}[07] NETWORK{RESET}               {WHITE}|{RESET} {RED}[08] HELP{RESET}                     {WHITE}|{RESET} {CYAN}[09] EXIT{RESET}                 {WHITE}|{RESET}")
+    print(f"{WHITE}|{RESET} myip /batchip targets       {WHITE}|{RESET} help / menu / clear            {WHITE}|{RESET} exit / quit                 {WHITE}|{RESET}")
+    print(f"{WHITE}+------------------------------+---------------------------------+------------------------------+{RESET}")
     print()
 
 
@@ -70,21 +85,37 @@ def run_terminal() -> None:
         if raw.lower() in {"help", "menu", "dashboard"}:
             dashboard()
             continue
+        if raw.lower() in {"clear", "cls"}:
+            boot_screen()
+            dashboard()
+            continue
         _dispatch(raw)
 
 
 def _dispatch(raw: str) -> None:
-    parts = raw.split()
-    command = parts[0].lower()
+    parts = shlex.split(raw)
+    command = parts[0].lower().lstrip("/")
     args = parts[1:]
     handlers: dict[str, Callable[[list[str]], dict[str, object]]] = {
         "ip": _ip,
+        "deepip": _deepip,
+        "checkip": _checkip,
+        "batchip": _batchip,
         "domain": _domain,
+        "lookup": _lookup,
+        "intel": _lookup,
         "dns": _dns,
+        "whois": _whois,
+        "contacts": _contacts,
         "tls": _tls,
+        "rdap": _rdap,
         "web": _web,
+        "webcheck": _web,
         "phone": _phone,
-        "username": _username,
+        "social": _social,
+        "name": _name,
+        "username": _social,
+        "myip": _myip,
     }
     handler = handlers.get(command)
     if handler is None:
@@ -95,7 +126,13 @@ def _dispatch(raw: str) -> None:
     except Exception as exc:
         print(f"{RED}Error:{RESET} {exc}")
         return
+    _print_payload(payload)
+
+
+def _print_payload(payload: dict[str, object]) -> None:
+    print(f"{WHITE}+-- result -------------------------------------------------------------------+{RESET}")
     print(json.dumps(payload, indent=2, ensure_ascii=True))
+    print(f"{WHITE}+-----------------------------------------------------------------------------+{RESET}")
 
 
 def _require(args: list[str], usage: str, minimum: int = 1) -> None:
@@ -108,9 +145,29 @@ def _ip(args: list[str]) -> dict[str, object]:
     return inspect_ip(args[0])
 
 
+def _deepip(args: list[str]) -> dict[str, object]:
+    _require(args, "deepip <ip|domain>")
+    return inspect_deep_ip(args[0])
+
+
+def _checkip(args: list[str]) -> dict[str, object]:
+    _require(args, "checkip <ip|domain>")
+    return inspect_check_ip(args[0])
+
+
+def _batchip(args: list[str]) -> dict[str, object]:
+    _require(args, "batchip <target1> <target2> ...")
+    return inspect_batch_ip(args)
+
+
 def _domain(args: list[str]) -> dict[str, object]:
     _require(args, "domain <host>")
     return inspect_domain(args[0])
+
+
+def _lookup(args: list[str]) -> dict[str, object]:
+    _require(args, "lookup <ip|domain>")
+    return inspect_lookup(args[0])
 
 
 def _dns(args: list[str]) -> dict[str, object]:
@@ -118,10 +175,25 @@ def _dns(args: list[str]) -> dict[str, object]:
     return inspect_dns(args[0])
 
 
+def _whois(args: list[str]) -> dict[str, object]:
+    _require(args, "whois <domain>")
+    return inspect_whois(args[0])
+
+
+def _contacts(args: list[str]) -> dict[str, object]:
+    _require(args, "contacts <domain>")
+    return inspect_contacts(args[0])
+
+
 def _tls(args: list[str]) -> dict[str, object]:
     _require(args, "tls <host> [port]")
     port = int(args[1]) if len(args) > 1 else 443
     return inspect_tls(args[0], port)
+
+
+def _rdap(args: list[str]) -> dict[str, object]:
+    _require(args, "rdap <ip|domain>")
+    return inspect_rdap(args[0])
 
 
 def _web(args: list[str]) -> dict[str, object]:
@@ -135,6 +207,17 @@ def _phone(args: list[str]) -> dict[str, object]:
     return inspect_phone(args[0], region)
 
 
-def _username(args: list[str]) -> dict[str, object]:
-    _require(args, "username <name>")
-    return inspect_username(args[0])
+def _social(args: list[str]) -> dict[str, object]:
+    _require(args, "social <username|full name>")
+    return inspect_social(" ".join(args))
+
+
+def _name(args: list[str]) -> dict[str, object]:
+    _require(args, "name <full name>")
+    return inspect_name(" ".join(args))
+
+
+def _myip(args: list[str]) -> dict[str, object]:
+    if args:
+        raise ValueError("usage: myip")
+    return inspect_my_ip()
