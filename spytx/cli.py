@@ -15,23 +15,30 @@ from .geo import (
 from .phone import inspect_phone
 from .public_intel import (
     inspect_batch_ip,
+    inspect_bgp,
     inspect_check_ip,
     inspect_contacts,
+    inspect_ct,
     inspect_deep_ip,
     inspect_domain,
     inspect_dns,
     inspect_engines,
+    inspect_external,
     inspect_ip,
     inspect_ip_health,
     inspect_lookup,
     inspect_my_ip,
     inspect_name,
     inspect_rdap,
+    inspect_reverse_ip,
+    inspect_ripe,
     inspect_social,
     inspect_tls,
+    inspect_trace,
     inspect_web,
     inspect_whois,
 )
+from .reports import export_record, list_records, show_record, write_record
 from .username import inspect_username
 
 
@@ -87,6 +94,24 @@ def build_parser() -> argparse.ArgumentParser:
     dns_cmd = sub.add_parser("dns", help="Resolve common DNS records.")
     dns_cmd.add_argument("target")
 
+    ct_cmd = sub.add_parser("ct", help="Build certificate transparency review links.")
+    ct_cmd.add_argument("target")
+
+    bgp_cmd = sub.add_parser("bgp", help="Build public routing review links.")
+    bgp_cmd.add_argument("target")
+
+    ripe_cmd = sub.add_parser("ripe", help="Build RIPE review links.")
+    ripe_cmd.add_argument("target")
+
+    reverseip_cmd = sub.add_parser("reverseip", help="Build reverse host review links.")
+    reverseip_cmd.add_argument("target")
+
+    external_cmd = sub.add_parser("external", help="Build external public review links.")
+    external_cmd.add_argument("target")
+
+    trace_cmd = sub.add_parser("trace", help="Sample local network path.")
+    trace_cmd.add_argument("target")
+
     whois_cmd = sub.add_parser("whois", help="Build public registration review links.")
     whois_cmd.add_argument("target")
 
@@ -123,6 +148,16 @@ def build_parser() -> argparse.ArgumentParser:
     rdap_cmd.add_argument("target")
 
     sub.add_parser("myip", help="Inspect this network public IP.")
+
+    history_cmd = sub.add_parser("history", help="List local result records.")
+    history_cmd.add_argument("limit", nargs="?", type=int, default=10)
+
+    show_cmd = sub.add_parser("show", help="Show a local result record.")
+    show_cmd.add_argument("record_id", type=int)
+
+    export_cmd = sub.add_parser("export", help="Export a local result record.")
+    export_cmd.add_argument("record_id", type=int)
+    export_cmd.add_argument("format", nargs="?", default="json", choices=["json", "txt"])
 
     return parser
 
@@ -163,6 +198,18 @@ def run(argv: list[str] | None = None) -> int:
         payload = inspect_lookup(args.target)
     elif args.command == "dns":
         payload = inspect_dns(args.target)
+    elif args.command == "ct":
+        payload = inspect_ct(args.target)
+    elif args.command == "bgp":
+        payload = inspect_bgp(args.target)
+    elif args.command == "ripe":
+        payload = inspect_ripe(args.target)
+    elif args.command == "reverseip":
+        payload = inspect_reverse_ip(args.target)
+    elif args.command == "external":
+        payload = inspect_external(args.target)
+    elif args.command == "trace":
+        payload = inspect_trace(args.target)
     elif args.command == "whois":
         payload = inspect_whois(args.target)
     elif args.command == "contacts":
@@ -185,10 +232,19 @@ def run(argv: list[str] | None = None) -> int:
         payload = inspect_rdap(args.target)
     elif args.command == "myip":
         payload = inspect_my_ip()
+    elif args.command == "history":
+        payload = list_records(args.limit)
+    elif args.command == "show":
+        payload = show_record(args.record_id)
+    elif args.command == "export":
+        payload = export_record(args.record_id, args.format)
     else:
         parser.error(f"unknown command: {args.command}")
 
-    print(json.dumps({"ok": True, "result": payload}, indent=2, ensure_ascii=True))
+    envelope: dict[str, object] = {"ok": True, "result": payload}
+    if args.command not in {"history", "show", "export"}:
+        envelope["record_id"] = write_record(args.command, payload)
+    print(json.dumps(envelope, indent=2, ensure_ascii=True))
     return 0
 
 

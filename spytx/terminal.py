@@ -18,23 +18,30 @@ from .geo import (
 from .phone import inspect_phone
 from .public_intel import (
     inspect_batch_ip,
+    inspect_bgp,
     inspect_check_ip,
     inspect_contacts,
+    inspect_ct,
     inspect_deep_ip,
     inspect_domain,
     inspect_dns,
     inspect_engines,
+    inspect_external,
     inspect_ip,
     inspect_ip_health,
     inspect_lookup,
     inspect_my_ip,
     inspect_name,
     inspect_rdap,
+    inspect_reverse_ip,
+    inspect_ripe,
     inspect_social,
     inspect_tls,
+    inspect_trace,
     inspect_web,
     inspect_whois,
 )
+from .reports import export_record, list_records, show_record, write_record
 
 
 BLUE = "\033[94m"
@@ -69,13 +76,13 @@ def boot_screen() -> None:
 def dashboard() -> None:
     print(f"{WHITE}+------------------------------+---------------------------------+------------------------------+{RESET}")
     print(f"{WHITE}|{RESET} {BLUE}[01] IP INTEL{RESET}              {WHITE}|{RESET} {RED}[02] DOMAIN / DNS{RESET}             {WHITE}|{RESET} {CYAN}[03] WEB POSTURE{RESET}          {WHITE}|{RESET}")
-    print(f"{WHITE}|{RESET} /ip /deepip /checkip /geo  {WHITE}|{RESET} /domain /lookup /dns /whois    {WHITE}|{RESET} /webcheck /tls /rdap       {WHITE}|{RESET}")
+    print(f"{WHITE}|{RESET} /ip /deepip /checkip /geo  {WHITE}|{RESET} /domain /dns /ct /whois        {WHITE}|{RESET} /webcheck /tls /rdap       {WHITE}|{RESET}")
     print(f"{WHITE}+------------------------------+---------------------------------+------------------------------+{RESET}")
     print(f"{WHITE}|{RESET} {BLUE}[04] PHONE META{RESET}            {WHITE}|{RESET} {RED}[05] SOCIAL / NAME{RESET}            {WHITE}|{RESET} {CYAN}[06] REPORTS{RESET}              {WHITE}|{RESET}")
     print(f"{WHITE}|{RESET} /phone <number> [region]    {WHITE}|{RESET} /social <name> /name <name>    {WHITE}|{RESET} JSON audit output          {WHITE}|{RESET}")
     print(f"{WHITE}+------------------------------+---------------------------------+------------------------------+{RESET}")
-    print(f"{WHITE}|{RESET} {BLUE}[07] NETWORK{RESET}               {WHITE}|{RESET} {RED}[08] HELP / EXIT{RESET}              {WHITE}|{RESET} {CYAN}[09] GEO COPY{RESET}             {WHITE}|{RESET}")
-    print(f"{WHITE}|{RESET} myip /bestgeo /map          {WHITE}|{RESET} help / clear / exit            {WHITE}|{RESET} /copygeo /copygmaps         {WHITE}|{RESET}")
+    print(f"{WHITE}|{RESET} {BLUE}[07] NETWORK{RESET}               {WHITE}|{RESET} {RED}[08] RECORDS{RESET}                  {WHITE}|{RESET} {CYAN}[09] GEO COPY{RESET}             {WHITE}|{RESET}")
+    print(f"{WHITE}|{RESET} myip /bgp /ripe /trace      {WHITE}|{RESET} history / show / export        {WHITE}|{RESET} /copygeo /copygmaps         {WHITE}|{RESET}")
     print(f"{WHITE}+------------------------------+---------------------------------+------------------------------+{RESET}")
     print()
 
@@ -127,6 +134,12 @@ def _dispatch(raw: str) -> None:
         "lookup": _lookup,
         "intel": _lookup,
         "dns": _dns,
+        "ct": _ct,
+        "bgp": _bgp,
+        "ripe": _ripe,
+        "reverseip": _reverseip,
+        "external": _external,
+        "trace": _trace,
         "whois": _whois,
         "contacts": _contacts,
         "tls": _tls,
@@ -138,6 +151,9 @@ def _dispatch(raw: str) -> None:
         "name": _name,
         "username": _social,
         "myip": _myip,
+        "history": _history,
+        "show": _show,
+        "export": _export,
     }
     handler = handlers.get(command)
     if handler is None:
@@ -148,12 +164,17 @@ def _dispatch(raw: str) -> None:
     except Exception as exc:
         print(f"{RED}Error:{RESET} {exc}")
         return
-    _print_payload(payload)
+    record_id = None
+    if command not in {"history", "show", "export"}:
+        record_id = write_record(command, payload)
+    _print_payload(payload, record_id=record_id)
 
 
-def _print_payload(payload: dict[str, object]) -> None:
+def _print_payload(payload: dict[str, object], *, record_id: int | None = None) -> None:
     print(f"{WHITE}+-- result -------------------------------------------------------------------+{RESET}")
     print(json.dumps(payload, indent=2, ensure_ascii=True))
+    if record_id is not None:
+        print(f"{CYAN}record_id:{RESET} {record_id}")
     print(f"{WHITE}+-----------------------------------------------------------------------------+{RESET}")
 
 
@@ -244,6 +265,36 @@ def _dns(args: list[str]) -> dict[str, object]:
     return inspect_dns(args[0])
 
 
+def _ct(args: list[str]) -> dict[str, object]:
+    _require(args, "ct <domain>")
+    return inspect_ct(args[0])
+
+
+def _bgp(args: list[str]) -> dict[str, object]:
+    _require(args, "bgp <ip|domain>")
+    return inspect_bgp(args[0])
+
+
+def _ripe(args: list[str]) -> dict[str, object]:
+    _require(args, "ripe <ip|domain>")
+    return inspect_ripe(args[0])
+
+
+def _reverseip(args: list[str]) -> dict[str, object]:
+    _require(args, "reverseip <domain>")
+    return inspect_reverse_ip(args[0])
+
+
+def _external(args: list[str]) -> dict[str, object]:
+    _require(args, "external <target>")
+    return inspect_external(args[0])
+
+
+def _trace(args: list[str]) -> dict[str, object]:
+    _require(args, "trace <ip|domain>")
+    return inspect_trace(args[0])
+
+
 def _whois(args: list[str]) -> dict[str, object]:
     _require(args, "whois <domain>")
     return inspect_whois(args[0])
@@ -290,3 +341,19 @@ def _myip(args: list[str]) -> dict[str, object]:
     if args:
         raise ValueError("usage: myip")
     return inspect_my_ip()
+
+
+def _history(args: list[str]) -> dict[str, object]:
+    limit = int(args[0]) if args else 10
+    return list_records(limit)
+
+
+def _show(args: list[str]) -> dict[str, object]:
+    _require(args, "show <record_id>")
+    return show_record(int(args[0]))
+
+
+def _export(args: list[str]) -> dict[str, object]:
+    _require(args, "export <record_id> [json|txt]")
+    fmt = args[1] if len(args) > 1 else "json"
+    return export_record(int(args[0]), fmt)

@@ -62,6 +62,12 @@ py main.py map 8.8.8.8
 py main.py domain example.com
 py main.py lookup example.com
 py main.py dns example.com
+py main.py ct example.com
+py main.py bgp 8.8.8.8
+py main.py ripe 8.8.8.8
+py main.py reverseip example.com
+py main.py external example.com
+py main.py trace 8.8.8.8
 py main.py whois example.com
 py main.py contacts example.com
 py main.py tls example.com
@@ -72,6 +78,9 @@ py main.py social syntx404
 py main.py name "Ada Lovelace"
 py main.py username syntx404
 py main.py rdap 8.8.8.8
+py main.py history 10
+py main.py show 1
+py main.py export 1 json
 ```
 
 ## Python

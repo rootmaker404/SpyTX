@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import socket
 import ipaddress
+import os
+import subprocess
 from datetime import datetime, timezone
 from urllib.parse import quote_plus
 from urllib.request import Request, urlopen
@@ -91,6 +93,12 @@ def inspect_engines() -> dict[str, object]:
             "map",
             "domain",
             "dns",
+            "ct",
+            "bgp",
+            "ripe",
+            "reverseip",
+            "trace",
+            "external",
             "tls",
             "web",
             "phone",
@@ -126,6 +134,99 @@ def inspect_contacts(target: str) -> dict[str, object]:
         "links": links,
         "scope": "public contact and security disclosure locations",
     }
+
+
+def inspect_ct(target: str) -> dict[str, object]:
+    domain = normalize_domain(target)
+    return {
+        "domain": domain,
+        "links": {
+            "crtsh": f"https://crt.sh/?q={quote_plus(domain)}",
+        },
+        "scope": "public certificate transparency review links",
+    }
+
+
+def inspect_bgp(target: str) -> dict[str, object]:
+    ip = _resolve_ip(target)
+    query = quote_plus(ip)
+    return {
+        "target": target,
+        "ip": ip,
+        "links": {
+            "bgp_tools": f"https://bgp.tools/ip/{query}",
+            "he_net": f"https://bgp.he.net/ip/{query}",
+        },
+        "scope": "public routing review links",
+    }
+
+
+def inspect_ripe(target: str) -> dict[str, object]:
+    value = target.strip()
+    query = quote_plus(value)
+    return {
+        "target": value,
+        "links": {
+            "routing": f"https://stat.ripe.net/{query}",
+            "database": f"https://apps.db.ripe.net/db-web-ui/query?searchtext={query}",
+        },
+        "scope": "public RIPE review links",
+    }
+
+
+def inspect_reverse_ip(target: str) -> dict[str, object]:
+    domain = normalize_domain(target)
+    query = quote_plus(domain)
+    return {
+        "domain": domain,
+        "links": {
+            "viewdns": f"https://viewdns.info/reverseip/?host={query}&t=1",
+            "crtsh": f"https://crt.sh/?q={query}",
+        },
+        "scope": "public reverse host review links",
+    }
+
+
+def inspect_external(target: str) -> dict[str, object]:
+    value = target.strip()
+    query = quote_plus(value)
+    return {
+        "target": value,
+        "links": {
+            "wayback": f"https://web.archive.org/web/*/{query}",
+            "urlscan": f"https://urlscan.io/search/#{query}",
+            "otx": f"https://otx.alienvault.com/indicator/domain/{query}",
+            "threatminer": f"https://www.threatminer.org/domain.php?q={query}",
+        },
+        "scope": "public external review links",
+    }
+
+
+def inspect_trace(target: str) -> dict[str, object]:
+    value = target.strip()
+    if not value:
+        raise ValueError("target is required")
+    command = ["tracert", "-d", "-h", "8", value] if os.name == "nt" else ["traceroute", "-n", "-m", "8", value]
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, timeout=20, check=False)
+        lines = [line.rstrip() for line in result.stdout.splitlines() if line.strip()]
+        if not lines and result.stderr:
+            lines = [line.rstrip() for line in result.stderr.splitlines() if line.strip()]
+        return {
+            "target": value,
+            "command": command[0],
+            "exit_code": result.returncode,
+            "hops": lines,
+            "scope": "local network path sample",
+        }
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return {
+            "target": value,
+            "command": command[0],
+            "error": str(exc),
+            "hops": [],
+            "scope": "local network path sample",
+        }
 
 
 def inspect_social(value: str) -> dict[str, object]:

@@ -3,11 +3,16 @@ from __future__ import annotations
 import unittest
 
 from spytx import (
+    inspect_bgp,
     inspect_check_ip,
     inspect_contacts,
+    inspect_ct,
     inspect_deep_ip,
+    inspect_external,
     inspect_name,
     inspect_rdap,
+    inspect_reverse_ip,
+    inspect_ripe,
     inspect_social,
     inspect_whois,
 )
@@ -28,6 +33,11 @@ class PublicIntelTests(unittest.TestCase):
         self.assertIn("iana", inspect_whois("example.com")["links"])
         self.assertTrue(inspect_contacts("example.com")["links"])
         self.assertIn("arin", inspect_rdap("8.8.8.8")["links"])
+        self.assertIn("crtsh", inspect_ct("example.com")["links"])
+        self.assertIn("bgp_tools", inspect_bgp("8.8.8.8")["links"])
+        self.assertIn("routing", inspect_ripe("8.8.8.8")["links"])
+        self.assertIn("viewdns", inspect_reverse_ip("example.com")["links"])
+        self.assertIn("wayback", inspect_external("example.com")["links"])
 
     def test_social_and_name(self) -> None:
         self.assertIn("links", inspect_social("syntx404"))
