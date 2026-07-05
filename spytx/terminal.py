@@ -59,13 +59,10 @@ def clear_screen() -> None:
 
 def boot_screen() -> None:
     clear_screen()
-    print(f"{BLUE}   _____             _______  __{RESET}")
-    print(f"{BLUE}  / ___/____  __  __/_  __/ |/ /{RESET}")
-    print(f"{RED}  \\__ \\/ __ \\/ / / / / /  |   / {RESET}")
-    print(f"{RED} ___/ / /_/ / /_/ / / /  /   |  {RESET}")
-    print(f"{WHITE}/____/ .___/\\__, / /_/  /_/|_|  {RESET}")
-    print(f"{WHITE}    /_/    /____/              {RESET}")
-    print(f"{WHITE}SpyTX public intelligence terminal toolkit{RESET}")
+    print(f"{BLUE}+------------------------------------------------------------+{RESET}")
+    print(f"{BLUE}| {WHITE}SpyTX{BLUE}                                                      |{RESET}")
+    print(f"{BLUE}| {RED}PUBLIC INTELLIGENCE TERMINAL{BLUE}                               |{RESET}")
+    print(f"{BLUE}+------------------------------------------------------------+{RESET}")
     print()
     print(f"{CYAN}[OK]{RESET} SpyTX terminal loaded")
     print(f"{CYAN}[OK]{RESET} Public metadata scope active")
