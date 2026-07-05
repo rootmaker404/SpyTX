@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import shlex
+import sys
 from typing import Callable
 
 from .phone import inspect_phone
@@ -34,18 +35,19 @@ RESET = "\033[0m"
 
 
 def clear_screen() -> None:
-    os.system("cls" if os.name == "nt" else "clear")
+    if sys.stdout.isatty():
+        os.system("cls" if os.name == "nt" else "clear")
 
 
 def boot_screen() -> None:
     clear_screen()
-    print(f"{BLUE}  _______  _______  __   __  _______  __   __ {RESET}")
-    print(f"{BLUE} |       ||       ||  | |  ||       ||  |_|  |{RESET}")
-    print(f"{RED} |  _____||    _  ||  |_|  ||_     _||       |{RESET}")
-    print(f"{RED} | |_____ |   |_| ||       |  |   |  |       |{RESET}")
-    print(f"{WHITE}|_____  ||    ___||_     _|  |   |  |       |{RESET}")
-    print(f"{WHITE} _____| ||   |      |   |    |   |  | ||_|| |{RESET}")
-    print(f"{WHITE}|_______||___|      |___|    |___|  |_|   |_|{RESET}")
+    print(f"{BLUE}   _____             _______  __{RESET}")
+    print(f"{BLUE}  / ___/____  __  __/_  __/ |/ /{RESET}")
+    print(f"{RED}  \\__ \\/ __ \\/ / / / / /  |   / {RESET}")
+    print(f"{RED} ___/ / /_/ / /_/ / / /  /   |  {RESET}")
+    print(f"{WHITE}/____/ .___/\\__, / /_/  /_/|_|  {RESET}")
+    print(f"{WHITE}    /_/    /____/              {RESET}")
+    print(f"{WHITE}SpyTX public intelligence terminal toolkit{RESET}")
     print()
     print(f"{CYAN}[OK]{RESET} SpyTX terminal loaded")
     print(f"{CYAN}[OK]{RESET} Public metadata scope active")
@@ -72,7 +74,7 @@ def run_terminal() -> None:
     dashboard()
     while True:
         try:
-            raw = input(f"{CYAN}spytx>{RESET} ").strip()
+            raw = input(f"{CYAN}SpyTX>{RESET} ").strip()
         except (EOFError, KeyboardInterrupt):
             print()
             print("bye")
