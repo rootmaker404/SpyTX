@@ -21,6 +21,10 @@ phone-to-person matching.
 
 ![SpyTX IP metadata result](docs/screenshots/03_ip_result.svg)
 
+### Geo Metadata
+
+![SpyTX geo metadata result](docs/screenshots/05_geo_result.svg)
+
 ### Phone Metadata
 
 ![SpyTX phone metadata result](docs/screenshots/04_phone_result.svg)
@@ -46,6 +50,15 @@ Direct commands:
 py main.py ip 8.8.8.8
 py main.py deepip 8.8.8.8
 py main.py checkip 8.8.8.8
+py main.py iphealth
+py main.py engines
+py main.py geo 8.8.8.8
+py main.py bestgeo 8.8.8.8
+py main.py providers 8.8.8.8
+py main.py precision 8.8.8.8
+py main.py copygeo 8.8.8.8
+py main.py copygmaps 8.8.8.8
+py main.py map 8.8.8.8
 py main.py domain example.com
 py main.py lookup example.com
 py main.py dns example.com
@@ -53,6 +66,7 @@ py main.py whois example.com
 py main.py contacts example.com
 py main.py tls example.com
 py main.py web example.com
+py main.py webcheck example.com
 py main.py phone +628123456789
 py main.py social syntx404
 py main.py name "Ada Lovelace"

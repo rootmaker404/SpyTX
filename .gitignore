@@ -1,12 +1,12 @@
-__pycache__/
+__py*/
 *.py[cod]
 .venv/
 venv/
 env/
 output/
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
+.pytest*/
+.mypy*/
+.ruff*/
 dist/
 build/
 *.egg-info/

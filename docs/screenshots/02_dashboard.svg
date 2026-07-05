@@ -10,24 +10,24 @@
   <text x="72" y="145" fill="#94a3b8" font-family="Consolas, monospace" font-size="17">public OSINT helpers with strict metadata scope</text>
   <g font-family="Consolas, monospace" font-size="18">
     <rect x="72" y="190" width="316" height="116" rx="6" fill="#101820" stroke="#36a3ff"/>
-    <text x="96" y="228" fill="#36a3ff" font-weight="700">[01] IP</text>
-    <text x="96" y="262" fill="#cbd5e1">py main.py ip 8.8.8.8</text>
+    <text x="96" y="228" fill="#36a3ff" font-weight="700">[01] IP + GEO</text>
+    <text x="96" y="262" fill="#cbd5e1">/ip /deepip /geo</text>
     <rect x="442" y="190" width="316" height="116" rx="6" fill="#101820" stroke="#f05252"/>
     <text x="466" y="228" fill="#f05252" font-weight="700">[02] DOMAIN</text>
-    <text x="466" y="262" fill="#cbd5e1">domain | dns | tls | web</text>
+    <text x="466" y="262" fill="#cbd5e1">/domain /dns /whois</text>
     <rect x="812" y="190" width="316" height="116" rx="6" fill="#101820" stroke="#e5e7eb"/>
     <text x="836" y="228" fill="#e5e7eb" font-weight="700">[03] USERNAME</text>
-    <text x="836" y="262" fill="#cbd5e1">public profile links</text>
+    <text x="836" y="262" fill="#cbd5e1">/social /name</text>
     <rect x="72" y="346" width="316" height="116" rx="6" fill="#101820" stroke="#7dd3fc"/>
     <text x="96" y="384" fill="#7dd3fc" font-weight="700">[04] PHONE</text>
     <text x="96" y="418" fill="#cbd5e1">safe number metadata</text>
     <rect x="442" y="346" width="316" height="116" rx="6" fill="#101820" stroke="#fb7185"/>
-    <text x="466" y="384" fill="#fb7185" font-weight="700">[05] REPORTS</text>
-    <text x="466" y="418" fill="#cbd5e1">json output by default</text>
+    <text x="466" y="384" fill="#fb7185" font-weight="700">[05] MAPS</text>
+    <text x="466" y="418" fill="#cbd5e1">/bestgeo /map /copygeo</text>
     <rect x="812" y="346" width="316" height="116" rx="6" fill="#101820" stroke="#94a3b8"/>
-    <text x="836" y="384" fill="#94a3b8" font-weight="700">[06] SCOPE</text>
-    <text x="836" y="418" fill="#cbd5e1">public sources only</text>
+    <text x="836" y="384" fill="#94a3b8" font-weight="700">[06] SOURCES</text>
+    <text x="836" y="418" fill="#cbd5e1">/providers /precision</text>
   </g>
   <rect x="72" y="540" width="1056" height="72" rx="6" fill="#05070a" stroke="#334155"/>
-  <text x="96" y="584" fill="#e5e7eb" font-family="Consolas, monospace" font-size="18">SpyTX&gt; /phone +628123456789</text>
+  <text x="96" y="584" fill="#e5e7eb" font-family="Consolas, monospace" font-size="18">SpyTX&gt; /geo 8.8.8.8</text>
 </svg>

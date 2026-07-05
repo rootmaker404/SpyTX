@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import socket
+import ipaddress
 from datetime import datetime, timezone
 from urllib.parse import quote_plus
 from urllib.request import Request, urlopen
 
 from .domain import inspect_domain, inspect_dns, inspect_tls, inspect_web, normalize_domain
+from .geo import inspect_best_geo
 from .ip import inspect_ip
 from .phone import inspect_phone
 from .username import inspect_username
@@ -14,7 +16,7 @@ from .username import inspect_username
 def inspect_lookup(target: str) -> dict[str, object]:
     value = target.strip()
     try:
-        return {"kind": "ip", "data": inspect_ip(value)}
+        ipaddress.ip_address(value)
     except ValueError:
         domain = normalize_domain(value)
         return {
@@ -25,12 +27,17 @@ def inspect_lookup(target: str) -> dict[str, object]:
                 "web": inspect_web(domain),
             },
         }
+    return {"kind": "ip", "data": inspect_deep_ip(value)}
 
 
 def inspect_deep_ip(target: str) -> dict[str, object]:
     base = inspect_ip(_resolve_ip(target))
+    geo = inspect_best_geo(str(base["ip"]))
     return {
         **base,
+        "geo": geo["best"],
+        "precision": geo["precision"],
+        "maps": geo["maps"],
         "risk": {
             "publicly_routable": base["is_global"],
             "private_or_reserved": not base["is_global"],
@@ -58,6 +65,40 @@ def inspect_batch_ip(targets: list[str]) -> dict[str, object]:
         except Exception as exc:
             results.append({"target": target, "ok": False, "error": str(exc)})
     return {"count": len(results), "results": results}
+
+
+def inspect_ip_health() -> dict[str, object]:
+    return {
+        "status": "ready",
+        "geo_sources": ["ipwho.is", "ipinfo.io"],
+        "network_checks": ["reverse_dns", "local_address_flags", "geo_agreement"],
+        "scope": "public network metadata modules",
+    }
+
+
+def inspect_engines() -> dict[str, object]:
+    return {
+        "modules": [
+            "ip",
+            "deepip",
+            "checkip",
+            "geo",
+            "bestgeo",
+            "providers",
+            "precision",
+            "copygeo",
+            "copygmaps",
+            "map",
+            "domain",
+            "dns",
+            "tls",
+            "web",
+            "phone",
+            "social",
+            "name",
+        ],
+        "scope": "SpyTX public-intelligence engines",
+    }
 
 
 def inspect_whois(target: str) -> dict[str, object]:

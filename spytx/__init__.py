@@ -1,5 +1,14 @@
 from __future__ import annotations
 
+from .geo import (
+    copy_geo,
+    copy_gmaps,
+    inspect_best_geo,
+    inspect_geo,
+    inspect_geo_sources,
+    inspect_precision,
+    save_geo_map,
+)
 from .phone import inspect_phone
 from .public_intel import (
     inspect_batch_ip,
@@ -8,7 +17,9 @@ from .public_intel import (
     inspect_deep_ip,
     inspect_domain,
     inspect_dns,
+    inspect_engines,
     inspect_ip,
+    inspect_ip_health,
     inspect_lookup,
     inspect_my_ip,
     inspect_name,
@@ -21,16 +32,24 @@ from .public_intel import (
 from .username import inspect_username
 
 __all__ = [
+    "copy_geo",
+    "copy_gmaps",
     "inspect_batch_ip",
+    "inspect_best_geo",
     "inspect_check_ip",
     "inspect_contacts",
     "inspect_deep_ip",
     "inspect_domain",
     "inspect_dns",
+    "inspect_engines",
+    "inspect_geo",
+    "inspect_geo_sources",
     "inspect_ip",
+    "inspect_ip_health",
     "inspect_lookup",
     "inspect_my_ip",
     "inspect_name",
+    "inspect_precision",
     "inspect_phone",
     "inspect_rdap",
     "inspect_social",
@@ -38,4 +57,5 @@ __all__ = [
     "inspect_username",
     "inspect_web",
     "inspect_whois",
+    "save_geo_map",
 ]

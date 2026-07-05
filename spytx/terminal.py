@@ -6,6 +6,15 @@ import shlex
 import sys
 from typing import Callable
 
+from .geo import (
+    copy_geo,
+    copy_gmaps,
+    inspect_best_geo,
+    inspect_geo,
+    inspect_geo_sources,
+    inspect_precision,
+    save_geo_map,
+)
 from .phone import inspect_phone
 from .public_intel import (
     inspect_batch_ip,
@@ -14,7 +23,9 @@ from .public_intel import (
     inspect_deep_ip,
     inspect_domain,
     inspect_dns,
+    inspect_engines,
     inspect_ip,
+    inspect_ip_health,
     inspect_lookup,
     inspect_my_ip,
     inspect_name,
@@ -58,13 +69,13 @@ def boot_screen() -> None:
 def dashboard() -> None:
     print(f"{WHITE}+------------------------------+---------------------------------+------------------------------+{RESET}")
     print(f"{WHITE}|{RESET} {BLUE}[01] IP INTEL{RESET}              {WHITE}|{RESET} {RED}[02] DOMAIN / DNS{RESET}             {WHITE}|{RESET} {CYAN}[03] WEB POSTURE{RESET}          {WHITE}|{RESET}")
-    print(f"{WHITE}|{RESET} /ip /deepip /checkip       {WHITE}|{RESET} /domain /lookup /dns /whois    {WHITE}|{RESET} /webcheck /tls /rdap       {WHITE}|{RESET}")
+    print(f"{WHITE}|{RESET} /ip /deepip /checkip /geo  {WHITE}|{RESET} /domain /lookup /dns /whois    {WHITE}|{RESET} /webcheck /tls /rdap       {WHITE}|{RESET}")
     print(f"{WHITE}+------------------------------+---------------------------------+------------------------------+{RESET}")
     print(f"{WHITE}|{RESET} {BLUE}[04] PHONE META{RESET}            {WHITE}|{RESET} {RED}[05] SOCIAL / NAME{RESET}            {WHITE}|{RESET} {CYAN}[06] REPORTS{RESET}              {WHITE}|{RESET}")
     print(f"{WHITE}|{RESET} /phone <number> [region]    {WHITE}|{RESET} /social <name> /name <name>    {WHITE}|{RESET} JSON audit output          {WHITE}|{RESET}")
     print(f"{WHITE}+------------------------------+---------------------------------+------------------------------+{RESET}")
-    print(f"{WHITE}|{RESET} {BLUE}[07] NETWORK{RESET}               {WHITE}|{RESET} {RED}[08] HELP{RESET}                     {WHITE}|{RESET} {CYAN}[09] EXIT{RESET}                 {WHITE}|{RESET}")
-    print(f"{WHITE}|{RESET} myip /batchip targets       {WHITE}|{RESET} help / menu / clear            {WHITE}|{RESET} exit / quit                 {WHITE}|{RESET}")
+    print(f"{WHITE}|{RESET} {BLUE}[07] NETWORK{RESET}               {WHITE}|{RESET} {RED}[08] HELP / EXIT{RESET}              {WHITE}|{RESET} {CYAN}[09] GEO COPY{RESET}             {WHITE}|{RESET}")
+    print(f"{WHITE}|{RESET} myip /bestgeo /map          {WHITE}|{RESET} help / clear / exit            {WHITE}|{RESET} /copygeo /copygmaps         {WHITE}|{RESET}")
     print(f"{WHITE}+------------------------------+---------------------------------+------------------------------+{RESET}")
     print()
 
@@ -102,6 +113,15 @@ def _dispatch(raw: str) -> None:
         "ip": _ip,
         "deepip": _deepip,
         "checkip": _checkip,
+        "iphealth": _iphealth,
+        "engines": _engines,
+        "geo": _geo,
+        "bestgeo": _bestgeo,
+        "providers": _providers,
+        "precision": _precision,
+        "copygeo": _copygeo,
+        "copygmaps": _copygmaps,
+        "map": _map,
         "batchip": _batchip,
         "domain": _domain,
         "lookup": _lookup,
@@ -155,6 +175,53 @@ def _deepip(args: list[str]) -> dict[str, object]:
 def _checkip(args: list[str]) -> dict[str, object]:
     _require(args, "checkip <ip|domain>")
     return inspect_check_ip(args[0])
+
+
+def _iphealth(args: list[str]) -> dict[str, object]:
+    if args:
+        raise ValueError("usage: iphealth")
+    return inspect_ip_health()
+
+
+def _engines(args: list[str]) -> dict[str, object]:
+    if args:
+        raise ValueError("usage: engines")
+    return inspect_engines()
+
+
+def _geo(args: list[str]) -> dict[str, object]:
+    _require(args, "geo <ip|domain>")
+    return inspect_geo(args[0])
+
+
+def _bestgeo(args: list[str]) -> dict[str, object]:
+    _require(args, "bestgeo <ip|domain>")
+    return inspect_best_geo(args[0])
+
+
+def _providers(args: list[str]) -> dict[str, object]:
+    _require(args, "providers <ip|domain>")
+    return inspect_geo_sources(args[0])
+
+
+def _precision(args: list[str]) -> dict[str, object]:
+    _require(args, "precision <ip|domain>")
+    return inspect_precision(args[0])
+
+
+def _copygeo(args: list[str]) -> dict[str, object]:
+    _require(args, "copygeo <ip|domain>")
+    return copy_geo(args[0])
+
+
+def _copygmaps(args: list[str]) -> dict[str, object]:
+    _require(args, "copygmaps <ip|domain>")
+    return copy_gmaps(args[0])
+
+
+def _map(args: list[str]) -> dict[str, object]:
+    _require(args, "map <ip|domain>")
+    return save_geo_map(args[0])
 
 
 def _batchip(args: list[str]) -> dict[str, object]:
