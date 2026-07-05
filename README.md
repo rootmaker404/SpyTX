@@ -7,14 +7,40 @@ It uses public network data, local parsing, and safe metadata only. It does not
 use private databases, secret tokens, tag/profile lookups, account bypasses, or
 phone-to-person matching.
 
+## Screenshots
+
+### Boot
+
+![SpyTX boot terminal](docs/screenshots/01_boot.svg)
+
+### Dashboard
+
+![SpyTX dashboard terminal](docs/screenshots/02_dashboard.svg)
+
+### IP Metadata
+
+![SpyTX IP metadata result](docs/screenshots/03_ip_result.svg)
+
+### Phone Metadata
+
+![SpyTX phone metadata result](docs/screenshots/04_phone_result.svg)
+
 ## Install
 
 ```powershell
 py -m pip install -r requirements.txt
-py main.py --help
+py main.py
 ```
 
 ## Commands
+
+Interactive terminal:
+
+```powershell
+py main.py
+```
+
+Direct commands:
 
 ```powershell
 py main.py ip 8.8.8.8

@@ -1,7 +1,12 @@
 from __future__ import annotations
 
-from spytx.cli import main
+import sys
+
+from spytx.cli import run as run_cli
+from spytx.terminal import run_terminal
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1:
+        raise SystemExit(run_cli(sys.argv[1:]))
+    run_terminal()
