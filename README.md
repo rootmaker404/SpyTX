@@ -7,6 +7,8 @@ It uses public network data, local parsing, and safe metadata only. It does not
 use private databases, secret tokens, tag/profile lookups, account bypasses, or
 phone-to-person matching.
 
+Credits: Syntx404, BullZ, BadBunny, and Krypt.
+
 ## Screenshots
 
 ### Boot

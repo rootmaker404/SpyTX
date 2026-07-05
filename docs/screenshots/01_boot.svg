@@ -1,26 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="SpyTX boot terminal screenshot">
-  <rect width="1200" height="680" fill="#05070a"/>
-  <rect x="28" y="24" width="1144" height="632" rx="10" fill="#0b0f14" stroke="#2b3440" stroke-width="2"/>
-  <rect x="28" y="24" width="1144" height="42" rx="10" fill="#111923"/>
+  <rect width="1200" height="680" fill="#03070b"/>
+  <rect x="28" y="24" width="1144" height="632" rx="10" fill="#071018" stroke="#263445" stroke-width="2"/>
+  <rect x="28" y="24" width="1144" height="42" rx="10" fill="#111b27"/>
   <circle cx="56" cy="45" r="7" fill="#ff5f57"/>
   <circle cx="78" cy="45" r="7" fill="#ffbd2e"/>
   <circle cx="100" cy="45" r="7" fill="#28c840"/>
-  <text x="600" y="51" fill="#95a3b3" font-family="Consolas, monospace" font-size="15" text-anchor="middle">SpyTX Terminal</text>
-
-  <text x="72" y="205" fill="#36a3ff" font-family="Arial, Helvetica, sans-serif" font-size="104" font-weight="800">Spy</text>
-  <text x="274" y="205" fill="#f05252" font-family="Arial, Helvetica, sans-serif" font-size="104" font-weight="800">TX</text>
-  <rect x="76" y="232" width="170" height="8" rx="4" fill="#36a3ff"/>
-  <rect x="256" y="232" width="118" height="8" rx="4" fill="#f05252"/>
-  <text x="72" y="288" fill="#f8fafc" font-family="Consolas, monospace" font-size="22" font-weight="700">PUBLIC INTELLIGENCE TERMINAL</text>
-  <text x="72" y="330" fill="#94a3b8" font-family="Consolas, monospace" font-size="18">clean public metadata workflow</text>
-
-  <text x="72" y="398" fill="#7dd3fc" font-family="Consolas, monospace" font-size="18">[OK]</text>
-  <text x="128" y="398" fill="#cbd5e1" font-family="Consolas, monospace" font-size="18">modules loaded: ip | geo | domain | dns | tls | web | phone | social</text>
-  <text x="72" y="438" fill="#7dd3fc" font-family="Consolas, monospace" font-size="18">[OK]</text>
-  <text x="128" y="438" fill="#cbd5e1" font-family="Consolas, monospace" font-size="18">scope guard active: public metadata only</text>
-  <text x="72" y="478" fill="#7dd3fc" font-family="Consolas, monospace" font-size="18">[OK]</text>
-  <text x="128" y="478" fill="#cbd5e1" font-family="Consolas, monospace" font-size="18">terminal mode ready</text>
-
-  <rect x="72" y="542" width="520" height="46" rx="6" fill="#101820" stroke="#334155"/>
-  <text x="96" y="572" fill="#f8fafc" font-family="Consolas, monospace" font-size="18">py main.py</text>
+  <text x="600" y="51" fill="#9aa7b7" font-family="Consolas, monospace" font-size="15" text-anchor="middle">SpyTX Terminal</text>
+  <rect x="72" y="104" width="1056" height="456" rx="8" fill="#09131d" stroke="#1f3144"/>
+  <text x="116" y="220" fill="#38a3ff" font-family="Arial Black, Arial, sans-serif" font-size="104" font-weight="900">Spy</text>
+  <text x="316" y="220" fill="#ff4f5e" font-family="Arial Black, Arial, sans-serif" font-size="104" font-weight="900">TX</text>
+  <rect x="116" y="248" width="166" height="8" rx="4" fill="#38a3ff"/>
+  <rect x="300" y="248" width="118" height="8" rx="4" fill="#ff4f5e"/>
+  <text x="116" y="312" fill="#f8fafc" font-family="Consolas, monospace" font-size="24" font-weight="700">PUBLIC INTELLIGENCE TERMINAL</text>
+  <text x="116" y="350" fill="#94a3b8" font-family="Consolas, monospace" font-size="18">ip | geo | domain | dns | tls | web | phone | social</text>
+  <text x="116" y="416" fill="#7dd3fc" font-family="Consolas, monospace" font-size="18">[OK]</text>
+  <text x="172" y="416" fill="#d8e1ec" font-family="Consolas, monospace" font-size="18">scope guard active: public metadata only</text>
+  <text x="116" y="454" fill="#7dd3fc" font-family="Consolas, monospace" font-size="18">[OK]</text>
+  <text x="172" y="454" fill="#d8e1ec" font-family="Consolas, monospace" font-size="18">terminal workflow ready</text>
+  <rect x="116" y="500" width="400" height="44" rx="6" fill="#0f1b28" stroke="#34465b"/>
+  <text x="140" y="528" fill="#f8fafc" font-family="Consolas, monospace" font-size="18">py main.py</text>
 </svg>
